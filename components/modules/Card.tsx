@@ -18,7 +18,7 @@ interface CardProps {
 function Card({ name, type, icon, deletable, id, childItems }: CardProps): JSX.Element {
   const router = useRouter();
   const extension = name ? (name === "root" ? "root" : name.split(".").pop()?.toLowerCase()) : "";
-  const slug = name.replace(/ /g, "_").toLowerCase();
+  // const slug = name.replace(/ /g, "_").toLowerCase();
   const currentPath = router.asPath;
   const lastPathSegment = currentPath.split("/").pop();
 
@@ -27,7 +27,7 @@ function Card({ name, type, icon, deletable, id, childItems }: CardProps): JSX.E
   const currentIcon = setIcon(type);
 
   const handleDelete = async () => {
-    dispatch({ type: "DELETE_FILE", payload: id });
+    await dispatch({ type: "DELETE_FILE", payload: id });
 
     // API Call
     const res = await fetch("/api/update-file", {
@@ -36,8 +36,6 @@ function Card({ name, type, icon, deletable, id, childItems }: CardProps): JSX.E
     });
 
     const data = await res.json();
-
-    console.log(data);
 
     if (data.status === "success") {
       console.log("File updated successfully");

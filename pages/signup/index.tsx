@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { ButtonHTMLAttributes, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const SignUp = () => {
     const data = await res.json();
 
     if (data.status === "failed") {
-      alert(data.message);
+      toast(data.message);
       const button = btnRef.current;
       if (button) {
         button.innerText = "Login";

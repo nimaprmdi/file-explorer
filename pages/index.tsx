@@ -3,6 +3,7 @@ import { FilesContext } from "@/context/FilesContextProvider";
 import { IFile } from "@/types/files";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedin] = useState<boolean>(false);
@@ -31,12 +32,12 @@ export default function Home() {
 
       // IF user-files api failed
       if (result.status === "failed") {
-        alert(result.message);
+        toast(result.message);
         const res: any = await fetch("/api/auth/signout");
         router.push("/");
       }
 
-      const data: IFile[] = result.data.files;
+      const data: IFile[] = (result.data && result.data.files) || [];
       dispatch({ type: "GET_FILES", payload: data });
     };
 

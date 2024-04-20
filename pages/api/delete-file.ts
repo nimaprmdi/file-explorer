@@ -44,8 +44,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   /*------------------------------------*/
   /* # Delete item from database */
   /*------------------------------------*/
-  const fileToUpdate = req.body;
-  user.files[fileToUpdate._id] = fileToUpdate;
-  await user.save();
-  res.status(200).json({ status: "success", message: "File deleted successfully", data: user });
+
+  // Helper function to delete the file recursively
+  const deleteFile = (files: any[]): boolean => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file._id === id) {
+        files.splice(i, 1); // Remove the file from the array
+        return true;
+      } else if (file.children && file.children.length > 0) {
+        const found = deleteFile(file.children);
+        if (found) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  // Delete the file recursively
+  const deleted = deleteFile(user.files);
+
+  if (deleted) {
+    await user.save();
+    res.status(200).json({
+      status: "success",
+      message: "File deleted successfully",
+      data: user,
+    });
+  } else {
+    res.status(404).json({
+      status: "failed",
+      message: "File not found",
+    });
+  }
 }

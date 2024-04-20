@@ -19,7 +19,7 @@ const Login = () => {
     const data = await res.json();
 
     if (data.status === "failed") {
-      alert(data.message);
+      toast(data.message);
       const button = btnRef.current;
       if (button) {
         button.innerText = "Login";

@@ -22,8 +22,6 @@ const Explorer = () => {
     } else {
       setItems(state.files);
     }
-
-    console.log(state);
   }, [state]);
 
   // Filter Items
@@ -44,7 +42,7 @@ const Explorer = () => {
             name={item.name}
             deletable={item.deleteable}
             childItems={item.children}
-            id={item.id}
+            id={item.id || uuidv4()}
             icon={<TypeScriptIcon />}
           />
         ))

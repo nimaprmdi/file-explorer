@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // import { ModalContext } from "@/context/ModalContextProvider";
 // import { CloseIcon } from "../icons/close";
 import { useRouter } from "next/router";
 import { FilesContext } from "@/context/FilesContextProvider";
 import { findObjectByName } from "@/utils/helpers";
 import _ from "lodash";
-
+import { v4 as uuidv4 } from "uuid";
 interface LayoutProps {
   children: any;
 }
@@ -30,39 +30,51 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
         deleteable: true,
         type: extension === undefined ? "folder" : extension,
         name: fileName,
-        children: [{}],
+        children: [],
       };
 
       let updatedFiles;
 
-      if (asPath === "/explore") {
-        updatedFiles = [...state.files, newFile];
-      } else if (slug && asPath !== "/explore") {
-        const files = state.files;
-        const foundRoot = findObjectByName(files, slug[slug.length - 1]);
-        if (foundRoot && foundRoot.length > 0) {
-          const oldRoot = foundRoot[0];
-          oldRoot.children = [...oldRoot.children, newFile];
-          updatedFiles = files;
-        } else {
-          console.error(`Root object not found: ${slug[slug.length - 1]}`);
+      // Check if the file name already exists at the current level
+      const currentLevel =
+        asPath === "/explore"
+          ? state.files
+          : findObjectByName(state.files, slug![slug!.length - 1])?.[0]?.children || [];
+
+      const fileNameExists = currentLevel.some((file) => file.name === fileName);
+
+      if (!fileNameExists) {
+        if (asPath === "/explore") {
+          updatedFiles = [...state.files, newFile];
+        } else if (slug && asPath !== "/explore") {
+          const files = state.files;
+          const foundRoot = findObjectByName(files, slug[slug.length - 1]);
+          if (foundRoot && foundRoot.length > 0) {
+            const oldRoot = foundRoot[0];
+            oldRoot.children = [...oldRoot.children, newFile];
+            updatedFiles = files;
+          } else {
+            console.error(`Root object not found: ${slug[slug.length - 1]}`);
+          }
         }
-      }
 
-      dispatch({ type: "GET_FILES", payload: updatedFiles });
+        dispatch({ type: "GET_FILES", payload: updatedFiles });
 
-      // API Call
-      const res = await fetch("/api/update-file", {
-        method: "POST",
-        body: JSON.stringify(updatedFiles),
-      });
+        // API Call
+        const res = await fetch("/api/update-file", {
+          method: "POST",
+          body: JSON.stringify(updatedFiles),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (data.status === "success") {
-        console.log("File updated successfully");
+        if (data.status === "success") {
+          console.log("File updated successfully");
+        } else {
+          console.error("Error updating file:", data.error);
+        }
       } else {
-        console.error("Error updating file:", data.error);
+        console.error("File name already exists at this level.");
       }
     }
   };
@@ -73,20 +85,20 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
         <div className="window">
           {/* Side Nav Content */}
           <div className="side-panel">
-            <label>Favourites</label>
+            <label>LIST MAP</label>
             <ul id="favourites">
-              <li>This PC</li>
-              <li className="selected">Desktop</li>
-              <li>admin</li>
-              <li>Downloads</li>
-              <li>Documents</li>
-              <li>Projects</li>
-            </ul>
-            <label>This PC</label>
-            <ul id="favourites">
-              <li>Local disk (C:)</li>
-              <li>CD drive (D:)</li>
-              <li>Data (E:)</li>
+              <li>{router.asPath.split("/")[1]}</li>
+              {router &&
+                slug &&
+                slug.length > 0 &&
+                Array.isArray(slug) &&
+                slug.map(
+                  (
+                    route: string | number,
+                    index
+                    // eslint-disable-next-line react/jsx-key
+                  ) => <li key={uuidv4()}>{route}</li>
+                )}
             </ul>
           </div>
 
@@ -114,10 +126,17 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
                 <button className="forward"></button>
               </div>
               <ul className="nav-box">
-                <li>Local disk (C:)</li>
-                <li>Users</li>
-                <li>admin</li>
-                <li>Desktop</li>
+                <li>{router.asPath}</li>
+                {router &&
+                  slug &&
+                  slug.length > 0 &&
+                  Array.isArray(slug) &&
+                  slug.map(
+                    (
+                      route: string | number
+                      // eslint-disable-next-line react/jsx-key
+                    ) => <li key={uuidv4()}>{route}</li>
+                  )}
               </ul>
             </div>
             <div className="content">{children}</div>

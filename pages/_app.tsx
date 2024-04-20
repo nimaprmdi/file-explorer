@@ -4,6 +4,7 @@ import { ModalContextProvider } from "@/context/ModalContextProvider";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import "iconify-icon";
+import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -11,6 +12,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <FilesContextProvider>
         <Layout>
           <Component {...pageProps} />
+          <div>
+            <Toaster />
+          </div>
         </Layout>
       </FilesContextProvider>
     </ModalContextProvider>
