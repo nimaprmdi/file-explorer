@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { ButtonHTMLAttributes, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const router = useRouter();
