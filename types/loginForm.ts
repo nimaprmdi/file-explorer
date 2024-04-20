@@ -3,4 +3,4 @@ interface loginFormTYPE {
   password: string;
 }
 
-export { loginFormTYPE };
+export type { loginFormTYPE };

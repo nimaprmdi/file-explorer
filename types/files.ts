@@ -6,4 +6,4 @@ interface IFile {
   children: IFile[];
 }
 
-export { IFile };
+export type { IFile };
