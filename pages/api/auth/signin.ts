@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(422).json({ status: "failed", message: "Invalid Data" });
   }
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: email }, {}, { maxTimeMS: 30000 });
   if (!user) {
     res.status(404).json({ status: "failed", message: "User doesnt Exist" });
   }

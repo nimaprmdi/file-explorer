@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   /*------------------------------------*/
   /* # User check existance */
   /*------------------------------------*/
-  const user = await User.findOne({ email: result?.email });
+  const user = await User.findOne({ email: result?.email }, {}, { maxTimeMS: 30000 });
   if (!user) res.status(404).json({ status: "failed", message: "user not found" });
 
   /*------------------------------------*/
