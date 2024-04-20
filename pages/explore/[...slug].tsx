@@ -42,7 +42,7 @@ const ExploreArchives = () => {
             name={item.name}
             deletable={item.deleteable}
             childItems={item.children}
-            id={item.id}
+            id={item.id || uuidv4()}
             icon={<TypeScriptIcon />}
           />
         ))
