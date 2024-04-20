@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { FilesContext } from "@/context/FilesContextProvider";
-import { files } from "@/types/files";
+import { IFile } from "@/types/files";
 
 const useFetchData = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ const useFetchData = () => {
       router.push("/");
     }
 
-    const data: files[] = result.data;
+    const data: IFile[] = result.data.files;
     dispatch({ type: "GET_FILES", payload: data });
   };
 

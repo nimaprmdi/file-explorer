@@ -2,7 +2,7 @@ import { TypeScriptIcon } from "@/components/icons/typescript";
 import Card from "@/components/modules/Card";
 import { FilesContext } from "@/context/FilesContextProvider";
 import useFetchData from "@/hooks/useFetchFiles";
-import { files } from "@/types/files";
+import { IFile } from "@/types/files";
 import { findObjectByName } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const ExploreArchives = () => {
   const router = useRouter();
-  const [items, setItems] = useState<files[]>([]);
+  const [items, setItems] = useState<IFile[]>([]);
   const { slug } = router.query;
   const { state, dispatch } = useContext(FilesContext);
 
@@ -42,6 +42,7 @@ const ExploreArchives = () => {
             name={item.name}
             deletable={item.deleteable}
             childItems={item.children}
+            id={item.id}
             icon={<TypeScriptIcon />}
           />
         ))

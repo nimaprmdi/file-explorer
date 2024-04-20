@@ -1,6 +1,5 @@
 import User from "@/models/User";
-import { files } from "@/types/files";
-import { UserPayload, verifyToken } from "@/utils/auth";
+import { UserPayload, verifyPassword, verifyToken } from "@/utils/auth";
 import connectDB from "@/utils/connectDb";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -20,10 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ status: "failed", message: "Failed to connecting DB" });
   }
 
-  /*------------------------------------*/
-  /* # user data */
-  /*------------------------------------*/
-  const { fileToDelete: fileNameDelete, token } = req.body;
+  /*------------------------------------*\
+    # user data
+  \*------------------------------------*/
+  const id = req.body;
+  const { token } = req.cookies;
   const privateKey = process.env.SECRET_KEY;
 
   /*------------------------------------*/
@@ -44,7 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   /*------------------------------------*/
   /* # Delete item from database */
   /*------------------------------------*/
-  user.files = user.files.filter((file: files) => file.name !== fileNameDelete);
+  const fileToUpdate = req.body;
+  user.files[fileToUpdate._id] = fileToUpdate;
   await user.save();
-  res.status(200).json({ status: "success", message: "File deleted successfully" });
+  res.status(200).json({ status: "success", message: "File deleted successfully", data: user });
 }

@@ -38,5 +38,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!user) res.status(404).json({ status: "failed", message: "user not found" });
 
   // status 200 here
-  res.status(200).json({ status: "success", message: "OK", data: user.files });
+  res.status(200).json({ status: "success", message: "OK", data: { files: user.files, _id: user._id } });
 }

@@ -1,13 +1,15 @@
 import { Schema, model, models } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const initialStructure = [
   {
     name: "root",
     type: "folder",
     deleteable: false,
+    id: uuidv4(),
     children: [
-      { name: "file1.txt", type: "file", deleteable: true },
-      { name: "file2.docx", type: "file", deleteable: true },
+      { name: "file1.txt", type: "file", deleteable: true, id: uuidv4() },
+      { name: "file2.docx", type: "file", deleteable: true, id: uuidv4() },
     ],
   },
 ];

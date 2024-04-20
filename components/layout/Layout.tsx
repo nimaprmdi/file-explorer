@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
         deleteable: true,
         type: extension === undefined ? "folder" : extension,
         name: fileName,
-        children: [],
+        children: [{}],
       };
 
       let updatedFiles;
@@ -56,7 +56,9 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
         method: "POST",
         body: JSON.stringify(updatedFiles),
       });
+
       const data = await res.json();
+
       if (data.status === "success") {
         console.log("File updated successfully");
       } else {

@@ -1,6 +1,6 @@
-import { files } from "@/types/files";
+import { IFile } from "@/types/files";
 
-function findObjectByName(files: files[], name: string): files[] | null {
+function findObjectByName(files: IFile[], name: string): IFile[] | null {
   for (const obj of files) {
     if (obj.name === name) {
       return [obj];
@@ -59,4 +59,20 @@ const setIcon = (fileType: string): string => {
   return key;
 };
 
-export { findObjectByName, setIcon };
+function deleteObjectById(obj: IFile[], idToRemove: string): IFile[] {
+  return obj
+    .map((file) => {
+      if (file.id === idToRemove) {
+        return null;
+      }
+
+      if (file.children && Array.isArray(file.children)) {
+        file.children = deleteObjectById(file.children, idToRemove);
+      }
+
+      return file;
+    })
+    .filter(Boolean) as IFile[];
+}
+
+export { findObjectByName, setIcon, deleteObjectById };

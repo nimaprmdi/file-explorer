@@ -1,80 +1,39 @@
 import { IFile } from "@/types/files";
+import { deleteObjectById } from "@/utils/helpers";
 import React, { createContext, useReducer } from "react";
 
 export interface FileState {
-  files: IFile | IFile[] | null;
+  files: IFile[] | null;
 }
 
 interface ActionType {
   type: string;
-  payload: IFile | IFile[];
+  payload: IFile[];
 }
 
-export type FileAction = { type: "GET_FILES"; payload: IFile | IFile[] | null };
-
-const initialState: { files: IFile | IFile[] } = {
+const initialState: { files: IFile[] } = {
   files: [],
 };
 
-const fileReducer = (state: { files: IFile | IFile[] }, action: ActionType) => {
+const fileReducer = (state: { files: IFile[] }, action: ActionType) => {
   switch (action.type) {
     case "GET_FILES":
       return { ...state, files: action.payload };
 
-    case "SET_FILES":
-      return { ...state, files: action.payload };
-
     case "DELETE_FILE":
-      const data =
-        Array.isArray(state.files) &&
-        state.files
-          .map((file: IFile, index: number) => {
-            if (Array.isArray(action.payload)) {
-              if (file.name === action.payload[index].name) {
-                return null; // Remove the file from the array
-              } else if (file.type === "folder") {
-                return {
-                  ...file,
-                  children: file.children.filter((child, index: number) => {
-                    //
-                    if (Array.is) child.type !== "folder" ? child.name !== action.payload[index].name : child;
-                  }),
-                };
-              }
-              return file;
-            }
-          })
-          .filter(Boolean);
-
-      return {
-        ...state,
-        files: data,
-      };
+      if (typeof action.payload === "string") {
+        const res = deleteObjectById(state.files, action.payload);
+        return { ...state, files: res };
+      }
 
     default:
       return state;
   }
 };
 
-// Helper function to recursively delete files from children
-const deleteFile = (file: IFile, fileToDelete: IFile): IFile => {
-  if (file.name === fileToDelete.name) {
-    return {
-      ...file,
-      children: file.children.filter((child) => child.name !== fileToDelete.name),
-    };
-  } else if (file.children.length > 0) {
-    return {
-      ...file,
-      children: file.children.map((child) => deleteFile(child, fileToDelete)),
-    };
-  }
-  return file;
-};
-
 // Create the context
 export const FilesContext = createContext<{
-  state: { files: IFile | IFile[] };
+  state: { files: IFile[] };
   dispatch: React.Dispatch<any>;
 }>({
   state: initialState,
