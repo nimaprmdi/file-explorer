@@ -31,6 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
         type: extension === undefined ? "folder" : extension,
         name: fileName,
         children: [],
+        id: uuidv4(),
       };
 
       let updatedFiles;
